@@ -1,0 +1,420 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+
+body {
+    background: radial-gradient(circle at center, #141c2b 0%, #080c14 100%);
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    color: #ecf0f1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    padding: 12px;
+}
+
+/* Header Arcade Marquee */
+.arcade-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.arcade-title {
+    font-size: 26px;
+    letter-spacing: 3px;
+    color: #f1c40f;
+    text-shadow: 
+        0 0 10px rgba(241, 196, 15, 0.9),
+        3px 3px 0 #b71c1c,
+        -2px -2px 0 #0d47a1;
+    animation: neonGlow 2s ease-in-out infinite alternate;
+}
+
+.arcade-subtitle {
+    font-size: 9.5px;
+    color: #40c4ff;
+    letter-spacing: 2px;
+    margin-top: 6px;
+    text-shadow: 0 0 6px rgba(64, 196, 255, 0.6);
+}
+
+@keyframes neonGlow {
+    from {
+        text-shadow: 0 0 10px rgba(241, 196, 15, 0.8), 3px 3px 0 #b71c1c;
+    }
+    to {
+        text-shadow: 0 0 20px rgba(241, 196, 15, 1), 0 0 30px rgba(255, 112, 67, 0.8), 3px 3px 0 #b71c1c;
+    }
+}
+
+/* Coin Marquee Box */
+.coin-marquee-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: #0f172a;
+    border: 2px solid #f59e0b;
+    padding: 8px 18px;
+    border-radius: 8px;
+    margin-top: 8px;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
+.coin-credit-text {
+    font-size: 11px;
+    color: #f59e0b;
+}
+
+.coin-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    background: #ea580c;
+    color: #ffffff;
+    border: 2px solid #fbbf24;
+    border-radius: 5px;
+    padding: 6px 14px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #9a3412;
+    transition: all 0.1s ease;
+}
+.coin-btn:hover {
+    background: #f97316;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 #9a3412;
+}
+.coin-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #9a3412;
+}
+
+/* Main Container Layout */
+.main-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1300px;
+    width: 100%;
+}
+
+/* Arcade Cabinet Bezel */
+.cabinet-bezel {
+    position: relative;
+    background: linear-gradient(145deg, #1e293b, #0f172a);
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.9),
+        inset 0 0 15px rgba(255, 255, 255, 0.1),
+        0 0 0 4px #020617;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.screen-container {
+    position: relative;
+    width: 600px;
+    height: 800px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.95);
+}
+
+canvas#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* CRT Scanline & Curved Glass Overlay */
+.crt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: 
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%),
+        radial-gradient(circle at center, transparent 65%, rgba(0, 0, 0, 0.55) 100%);
+    background-size: 100% 4px, 100% 100%;
+    opacity: 0.8;
+    z-index: 10;
+}
+
+.crt-overlay.hidden {
+    display: none;
+}
+
+/* Arcade Toolbar */
+.cabinet-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+    width: 100%;
+}
+
+.retro-btn {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9.5px;
+    padding: 9px 13px;
+    background: #334155;
+    color: #ffffff;
+    border: 2px solid #64748b;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 4px 0 #0f172a;
+}
+
+.retro-btn:hover {
+    background: #475569;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #0f172a;
+}
+
+.retro-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #0f172a;
+}
+
+.retro-btn.primary {
+    background: #dc2626;
+    border-color: #f87171;
+    box-shadow: 0 4px 0 #7f1d1d;
+}
+.retro-btn.primary:hover {
+    background: #b91c1c;
+    box-shadow: 0 6px 0 #7f1d1d;
+}
+
+.retro-btn.success {
+    background: #16a34a;
+    border-color: #4ade80;
+    box-shadow: 0 4px 0 #14532d;
+}
+.retro-btn.success:hover {
+    background: #15803d;
+    box-shadow: 0 6px 0 #14532d;
+}
+
+/* Side Panels */
+.side-panel {
+    width: 340px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 3px solid #0284c7;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.panel-section {
+    border-bottom: 2px dashed #334155;
+    padding-bottom: 12px;
+}
+
+.panel-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.section-title {
+    font-size: 11px;
+    color: #f59e0b;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.p1-color {
+    color: #38bdf8;
+}
+
+.p2-color {
+    color: #f87171;
+}
+
+.key-list {
+    list-style: none;
+    font-size: 8px;
+    line-height: 1.8;
+}
+
+.key-list li {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.key-badge {
+    background: #020617;
+    border: 1px solid #64748b;
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: #fbbf24;
+    font-size: 8px;
+}
+
+/* Overlay Modals */
+.game-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 6, 23, 0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    padding: 22px;
+    text-align: center;
+    backdrop-filter: blur(3px);
+}
+
+.game-modal.hidden {
+    display: none;
+}
+
+.modal-title {
+    font-size: 21px;
+    color: #f59e0b;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+}
+
+.modal-desc {
+    font-size: 9px;
+    line-height: 1.8;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+    max-width: 500px;
+}
+
+.modal-btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.coin-status-banner {
+    background: #020617;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 9px;
+    color: #f59e0b;
+    margin: 10px 0;
+    width: 90%;
+}
+
+.score-board {
+    background: #020617;
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+    width: 88%;
+}
+
+.score-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    margin: 7px 0;
+}
+
+/* Name Input Box */
+.name-input-box {
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.name-input-field {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: #f59e0b;
+    background: #020617;
+    border: 2px solid #38bdf8;
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 200px;
+    outline: none;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+/* Leaderboard Table */
+.leaderboard-table {
+    width: 95%;
+    border-collapse: collapse;
+    font-size: 9px;
+    margin: 12px 0;
+    background: #020617;
+    border: 2px solid #334155;
+}
+
+.leaderboard-table th, .leaderboard-table td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px dashed #1e293b;
+}
+
+.leaderboard-table th {
+    background: #1e293b;
+    color: #f59e0b;
+    font-size: 9.5px;
+}
+
+/* Responsive */
+@media (max-width: 1050px) {
+    .main-wrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    .side-panel {
+        width: 600px;
+    }
+}
+
+@media (max-width: 650px) {
+    .screen-container {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 4;
+    }
+    .cabinet-bezel {
+        padding: 8px;
+        width: 100%;
+    }
+    .side-panel {
+        width: 100%;
+    }
+    .arcade-title {
+        font-size: 18px;
+    }
+}

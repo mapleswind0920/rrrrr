@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1943: 中途島海空戰 (航母起飛 ‧ 魔王出場 ‧ 戰役報告 ‧ 星星加分版)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Arcade Header Marquee -->
+    <header class="arcade-header">
+        <h1 class="arcade-title">1943: MIDWAY COMBAT</h1>
+        <div class="arcade-subtitle">航母升空 ‧ 魔王登場介紹 ‧ 逐關難度遞增 ‧ 戰役過關報告</div>
+        
+        <!-- Coin Counter & Top Action Bar -->
+        <div class="coin-marquee-box">
+            <span class="coin-credit-text">🪙 CREDITS: <span id="creditCount" style="color: #4ade80;">0</span></span>
+            <button id="btnInsertCoin" class="coin-btn">🪙 投幣 (P 鍵)</button>
+            <button id="btnViewLeaderboard" class="retro-btn" style="padding: 6px 10px; font-size: 9px;">🏆 英雄榜</button>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        <!-- Arcade Cabinet Bezel -->
+        <div class="cabinet-bezel">
+            <div class="screen-container">
+                <!-- Game Canvas -->
+                <canvas id="gameCanvas" width="600" height="800"></canvas>
+
+                <!-- CRT Scanline Overlay Filter -->
+                <div id="crtOverlay" class="crt-overlay"></div>
+
+                <!-- Modal 1: Title Screen -->
+                <div id="titleModal" class="game-modal">
+                    <h2 class="modal-title">1943: THE BATTLE OF MIDWAY</h2>
+                    <p class="modal-desc">
+                        開局航母彈射升空 ‧ 逐關彈幕遞增 ‧ 擊破魔王戰役報告！<br>
+                        單人遊玩需 1 枚硬幣，雙人遊玩需 2 枚硬幣 (按 P 鍵投幣)
+                    </p>
+
+                    <div id="coinAlert" class="coin-status-banner">
+                        請投幣！按 P 鍵或點擊上方「🪙 投幣」按鈕
+                    </div>
+
+                    <div class="modal-btn-row">
+                        <button id="btnStart1P" class="retro-btn success">1P 單人出擊 (需 1 枚)</button>
+                        <button id="btnStart2P" class="retro-btn primary">1P + 2P 雙人出擊 (需 2 枚)</button>
+                    </div>
+                </div>
+
+                <!-- Modal 2: Post-Stage Debriefing Report (過關數據報告) -->
+                <div id="stageReportModal" class="game-modal hidden">
+                    <h2 id="reportStageTitle" class="modal-title" style="color: #4ade80;">STAGE 1 戰役大捷</h2>
+                    <div id="reportBossName" style="color: #facc15; font-size: 11px; margin-bottom: 12px; font-weight: bold;">
+                        【擊破旗艦】: 重巡洋艦「利根」
+                    </div>
+
+                    <div class="score-board">
+                        <div class="score-row">
+                            <span style="color: #38bdf8;">✈️ 擊落敵機數:</span>
+                            <span id="reportPlanesCount" style="color: #fff;">0 架</span>
+                        </div>
+                        <div class="score-row">
+                            <span style="color: #facc15;">⭐ 獲取星星數:</span>
+                            <span id="reportStarsCount" style="color: #fff;">0 顆</span>
+                        </div>
+                        <div class="score-row">
+                            <span style="color: #fb923c;">🎯 擊破旗艦獎勵:</span>
+                            <span id="reportClearBonus" style="color: #facc15;">+20,000 PTS</span>
+                        </div>
+                        <div class="score-row" style="border-top: 1px dashed #475569; padding-top: 6px; margin-top: 6px;">
+                            <span class="p1-color">1P 目前得分:</span>
+                            <span id="reportTotalScore1P">0</span>
+                        </div>
+                        <div class="score-row">
+                            <span class="p2-color">2P 目前得分:</span>
+                            <span id="reportTotalScore2P">-</span>
+                        </div>
+                        <div class="score-row" style="align-items: center; margin-top: 6px;">
+                            <span style="color: #e2e8f0;">戰役總體評價:</span>
+                            <span id="reportGrade" style="color: #f59e0b; font-size: 16px; font-weight: bold;">S</span>
+                        </div>
+                    </div>
+
+                    <button id="btnNextStage" class="retro-btn success" style="font-size: 11px; padding: 12px 20px;">
+                        進入下一關 (NEXT STAGE) ➜
+                    </button>
+                </div>
+
+                <!-- Modal 3: Save Score & Name Entry (遊戲結束詢問是否保存與輸入姓名) -->
+                <div id="saveScoreModal" class="game-modal hidden">
+                    <h2 class="modal-title" style="color: #f87171;">MISSION FINISHED</h2>
+                    <div class="score-board">
+                        <div class="score-row">
+                            <span class="p1-color">1P 最終戰功:</span>
+                            <span id="saveFinalScore1P">0</span>
+                        </div>
+                        <div class="score-row">
+                            <span class="p2-color">2P 最終戰功:</span>
+                            <span id="saveFinalScore2P">0</span>
+                        </div>
+                        <div class="score-row">
+                            <span style="color: #fbbf24;">抵達關卡:</span>
+                            <span id="saveFinalStage" style="color: #38bdf8;">STAGE 1</span>
+                        </div>
+                    </div>
+
+                    <p class="modal-desc" style="color: #fde047; font-size: 10px;">
+                        是否保存您的英雄戰績至排行榜？
+                    </p>
+
+                    <div class="name-input-box">
+                        <label for="playerNameInput" style="font-size: 9px; color: #94a3b8;">請輸入姓名 (1~10字):</label>
+                        <input type="text" id="playerNameInput" class="name-input-field" maxlength="10" value="ACE-1P" />
+                    </div>
+
+                    <div class="modal-btn-row">
+                        <button id="btnConfirmSave" class="retro-btn success">💾 保存戰績</button>
+                        <button id="btnSkipSave" class="retro-btn">❌ 不保存 (跳過)</button>
+                    </div>
+                </div>
+
+                <!-- Modal 4: Leaderboard (TOP 10 英雄榜) -->
+                <div id="leaderboardModal" class="game-modal hidden">
+                    <h2 class="modal-title" style="color: #fbbf24;">🏆 TOP 10 英雄榜</h2>
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>名次</th>
+                                <th>英名</th>
+                                <th>得分</th>
+                                <th>戰役關卡</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody"></tbody>
+                    </table>
+
+                    <div class="modal-btn-row">
+                        <button id="btnReCoin" class="retro-btn success">🪙 重新投幣 (開新局)</button>
+                        <button id="btnCloseLeaderboard" class="retro-btn">返回主選單</button>
+                    </div>
+                </div>
+
+                <!-- Modal: Pause -->
+                <div id="pauseModal" class="game-modal hidden">
+                    <h2 class="modal-title">PAUSED</h2>
+                    <p class="modal-desc">按 ESC 鍵或點擊按鈕繼續遊戲</p>
+                    <button class="retro-btn success" onclick="window.game.togglePause()">繼續戰鬥</button>
+                </div>
+            </div>
+
+            <!-- Arcade Cabinet Toolbar -->
+            <div class="cabinet-toolbar">
+                <button id="btnSound" class="retro-btn">🔊 聲音: 開</button>
+                <button id="btnAutofire" class="retro-btn">⚡ 連射: 開</button>
+                <button id="btnCrt" class="retro-btn">📺 CRT 掃描線: 開</button>
+                <button id="btnPause" class="retro-btn">⏸ 暫停 (ESC)</button>
+            </div>
+        </div>
+
+        <!-- Side Panel: Controls & Features Guide -->
+        <aside class="side-panel">
+            <!-- Coin Mechanism Intro -->
+            <div class="panel-section" style="background: rgba(245, 158, 11, 0.1); border-radius: 6px; padding: 10px;">
+                <h3 class="section-title" style="color: #f59e0b;">🪙 街機投幣規則</h3>
+                <div style="font-size: 8px; line-height: 1.8; color: #f8fafc;">
+                    <div>• <strong>按 P 鍵投幣</strong> (或點擊上方投幣按鈕)</div>
+                    <div>• <strong>單人遊玩 (1P)</strong>: 需投 1 枚硬幣</div>
+                    <div>• <strong>雙人遊玩 (2P)</strong>: 需投 2 枚硬幣</div>
+                    <div>• 結束後可保存姓名與分數，隨時重新投幣開新局！</div>
+                </div>
+            </div>
+
+            <!-- 1P Controls -->
+            <div class="panel-section">
+                <h3 class="section-title p1-color">✈️ 1P (藍色機) 操控</h3>
+                <ul class="key-list">
+                    <li><span>戰機移動</span><span class="key-badge">W / A / S / D</span></li>
+                    <li><span>投放炸彈 (MEGA CRASH)</span><span class="key-badge">B 鍵</span></li>
+                    <li><span>機槍射擊</span><span class="key-badge">J 或 Space</span></li>
+                    <li><span>360° 特技翻滾 (迴避)</span><span class="key-badge">C 鍵</span></li>
+                </ul>
+            </div>
+
+            <!-- 2P Controls -->
+            <div class="panel-section">
+                <h3 class="section-title p2-color">✈️ 2P (紅色機) 操控</h3>
+                <ul class="key-list">
+                    <li><span>戰機移動</span><span class="key-badge">方向鍵 ↑ ↓ ← →</span></li>
+                    <li><span>投放炸彈 (MEGA CRASH)</span><span class="key-badge">數字 1 鍵 (或九宮格 1)</span></li>
+                    <li><span>機槍射擊</span><span class="key-badge">Enter / 數字 0 / K</span></li>
+                    <li><span>360° 特技翻滾 (迴避)</span><span class="key-badge">數字 2 鍵</span></li>
+                </ul>
+            </div>
+
+            <!-- New Features Highlights -->
+            <div class="panel-section">
+                <h3 class="section-title">🌟 新增戰役特色</h3>
+                <div style="font-size: 8px; line-height: 1.8; color: #cbd5e1;">
+                    <div>• <strong>航母彈射升空</strong>：開局親臨 Enterprise 號起飛！</div>
+                    <div>• <strong>逐關難度微升</strong>：第1關極致溫和，隨關卡推進彈幕漸進微幅增加。</div>
+                    <div>• <strong>魔王出場規格介紹</strong>：出場前空襲警報響起，顯示艦名、全長與重型火力！</div>
+                    <div>• <strong>擊沉確認公告</strong>：破關後宣告擊沉魔王全名。</div>
+                    <div>• <strong>加分金星 (⭐)</strong>：擊落中型轟炸機或特定敵機掉落，每顆 +2000 分！</div>
+                    <div>• <strong>戰役過關數據報告</strong>：結算擊落數、星星數、獎勵分與等級評價。</div>
+                </div>
+            </div>
+
+            <!-- 5 Stages & Loop Overview -->
+            <div class="panel-section">
+                <h3 class="section-title">🗺️ 全五關戰役情報</h3>
+                <div style="font-size: 8px; line-height: 1.7; color: #cbd5e1;">
+                    <div>STAGE 1: 突入中途島 ➜ <strong>重巡洋艦「利根」</strong></div>
+                    <div>STAGE 2: 珊瑚海截擊 ➜ <strong>航空母艦「加賀」</strong></div>
+                    <div>STAGE 3: 鐵底海峽夜戰 ➜ <strong>高速戰艦「金剛」</strong></div>
+                    <div>STAGE 4: 馬里亞納海空 ➜ <strong>裝甲空母「大鳳」</strong></div>
+                    <div>STAGE 5: 雷伊泰灣決戰 ➜ <strong>超弩級戰艦「大和」</strong></div>
+                    <div style="color: #fbbf24; margin-top: 4px; padding-top: 4px; border-top: 1px dashed #475569;">
+                        ★ <strong>第 5 關大捷後從第 1 關自動循環 (LOOP)</strong>，分數殘機保留，難度微升！
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="audio.js"></script>
+    <script src="sprites.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
